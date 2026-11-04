@@ -31,7 +31,7 @@
             </h1>
             <p class="text-[10px] text-red-100/80 uppercase font-bold tracking-widest">Alcantara's Diesel - Linha Pesada & Eletrônica</p>
         </div>
-        <div id="status-pwa" class="bg-red-950/80 px-3 py-1 rounded-full text-[10px] font-black text-red-200 border border-red-400/30 flex items-center gap-1.5">
+        <div class="bg-red-950/80 px-3 py-1 rounded-full text-[10px] font-black text-red-200 border border-red-400/30 flex items-center gap-1.5">
             <i class="fa-solid fa-microchip text-red-400"></i> DIESEL PRECISO
         </div>
     </header>
@@ -40,17 +40,17 @@
 
         <!-- CAIXA DE BUSCA PRINCIPAL -->
         <div class="bg-slate-900/90 p-5 rounded-3xl shadow-2xl border border-slate-800 space-y-3 backdrop-blur-md">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide block flex justify-between">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide flex justify-between">
                 <span>Código do Filtro ou Veículo</span>
                 <span class="text-red-500 font-normal italic text-[10px]">Combustível • Óleo • Ar • Racor</span>
             </label>
             <div class="relative">
                 <input type="text" id="input-busca" placeholder="EX: PSC76, PSC75, FS1000, PEL120..." class="w-full bg-slate-950 border border-slate-800 p-4 rounded-2xl font-black text-red-400 placeholder:text-slate-600 text-lg uppercase focus:outline-none focus:ring-2 focus:ring-red-500 transition">
-                <button onclick="buscarFiltro()" class="absolute right-2 top-2 bottom-2 bg-red-600 hover:bg-red-500 text-white px-5 rounded-xl font-bold text-sm flex items-center gap-2 transition active:scale-95 shadow-lg">
+                <button type="button" onclick="buscarFiltro()" class="absolute right-2 top-2 bottom-2 bg-red-600 hover:bg-red-500 text-white px-5 rounded-xl font-bold text-sm flex items-center gap-2 transition active:scale-95 shadow-lg">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
-            <p class="text-[10px] text-slate-500 italic">Digite o código de qualquer marca (Tecfil, Mann, Fleetguard, Donaldson, Mahle, Racor, Wega) ou modelo do caminhão.</p>
+            <p class="text-[10px] text-slate-500 italic">Digite qualquer marca (Tecfil, Mann, Fleetguard, Donaldson, Mahle, Racor, Wega) ou modelo do caminhão.</p>
         </div>
 
         <!-- ÁREA DE EXIBIÇÃO DE RESULTADOS -->
@@ -61,7 +61,7 @@
     </main>
 
     <script>
-        // BASE TÉCNICA DE ALTA PRECISÃO (COMBUSTÍVEL, ÓLEO LUBRIFICANTE, AR E RACOR)
+        // BASE TÉCNICA DE ALTA PRECISÃO
         const BASE_FILTROS = [
             // FILTROS DE COMBUSTÍVEL
             {
@@ -134,8 +134,6 @@
                     "WEGA": "FSD-2051"
                 }
             },
-
-            // FILTROS DE ÓLEO LUBRIFICANTE DO MOTOR
             {
                 codigosBusca: ["PEL120", "PEL 120", "HU951/1X", "HU9511X", "LF16015", "P550632", "OX345/7D", "WOE620"],
                 principal: "TECFIL PEL120",
@@ -169,8 +167,6 @@
                     "WEGA": "WO-460"
                 }
             },
-
-            // FILTROS DE AR
             {
                 codigosBusca: ["AP8843", "AP 8843", "C27844", "C27844/1", "AF25627", "P533781", "LX1812", "WAP269"],
                 principal: "TECFIL AP8843",
@@ -190,11 +186,14 @@
         ];
 
         function buscarFiltro() {
-            const termo = document.getElementById('input-busca').value.toUpperCase().trim();
+            const inputEl = document.getElementById('input-busca');
             const container = document.getElementById('container-resultado');
+            if (!inputEl || !container) return;
+
+            const termo = inputEl.value.toUpperCase().trim();
 
             if (!termo) {
-                alert('Digite um código de filtro ou aplicação para pesquisar!');
+                alert('Digite um código de filtro ou aplicação!');
                 return;
             }
 
@@ -205,62 +204,9 @@
                 </div>
             `;
 
-            const buscaLimpa = termo.replace(/[\s\-\/\.]/g, '');
-            const resultados = BASE_FILTROS.filter(f => 
-                f.codigosBusca.some(c => c.replace(/[\s\-\/\.]/g, '') === buscaLimpa) ||
-                f.principal.replace(/[\s\-\/\.]/g, '').includes(buscaLimpa) ||
-                f.aplicacaoOficial.toUpperCase().includes(termo) ||
-                f.motor.toUpperCase().includes(termo)
-            );
+            const buscaLimpa = termo.replace(/[^A-Z0-9]/g, '');
 
-            if (resultados.length > 0) {
-                container.innerHTML = '';
-                resultados.forEach(item => {
-                    renderizarCardTecnico(item, "VERIFICADO • ALCANTARA'S DIESEL");
-                });
-            } else {
-                container.innerHTML = `
-                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-3 text-center shadow-xl">
-                        <i class="fa-solid fa-circle-exclamation text-amber-500 text-3xl"></i>
-                        <h3 class="font-black text-slate-200 text-sm">Filtro "${termo}" não localizado na busca rápida</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Para evitar erros de micragem/rosca em injeção Common Rail, confirme a aplicação no catálogo impresso ou aplicativo da Tecfil/Mann informando o modelo exato do motor.
-                        </p>
-                        <button onclick="copiarTexto('${termo}')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-2 mx-auto transition">
-                            <i class="fa-solid fa-copy text-red-400"></i> Copiar Código Pesquisado
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        function renderizarCardTecnico(item, seloFonte) {
-            const container = document.getElementById('container-resultado');
-
-            let equivalenciasHTML = '';
-            for (const [marca, cod] of Object.entries(item.equivalencias)) {
-                equivalenciasHTML += `
-                    <div onclick="copiarTexto('${cod}')" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 flex justify-between items-center cursor-pointer hover:border-red-500/50 transition">
-                        <span class="text-[11px] font-bold text-slate-400">${marca}</span>
-                        <strong class="text-xs font-black text-white tracking-wide font-mono flex items-center gap-1.5">
-                            ${cod} <i class="fa-regular fa-copy text-[10px] text-slate-500"></i>
-                        </strong>
-                    </div>
-                `;
-            }
-
-            const card = document.createElement('div');
-            card.className = "bg-slate-900 border border-red-500/30 p-5 rounded-3xl shadow-2xl space-y-4";
-            card.innerHTML = `
-                <div class="flex justify-between items-start border-b border-slate-800 pb-3">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[9px] font-black bg-red-950 text-red-400 px-2.5 py-0.5 rounded-full border border-red-800 uppercase tracking-wider">
-                                ${seloFonte}
-                            </span>
-                            <span class="text-[9px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full uppercase">
-                                ${item.categoria}
-                            </span>
-                        </div>
-                        <h2 class="text-xl font-black italic text-red-500 mt-1.5">${item.principal}</h2>
-                        <p class
+            const resultados = BASE_FILTROS.filter(f => {
+                const bateuCodigo = f.codigosBusca.some(c => c.replace(/[^A-Z0-9]/g, '').includes(buscaLimpa));
+                const bateuPrincipal = f.principal.replace(/[^A-Z0-9]/g, '').includes(buscaLimpa);
+                const bateuVe
