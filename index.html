@@ -9,12 +9,8 @@
     <!-- FontAwesome para Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Configurações PWA (Aplicativo Instalável) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#dc2626">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Filtros Diesel">
 
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -31,9 +27,9 @@
             </h1>
             <p class="text-[10px] text-red-100/80 uppercase font-bold tracking-widest">Alcantara's Diesel - Linha Pesada & Eletrônica</p>
         </div>
-        <div class="bg-red-950/80 px-3 py-1 rounded-full text-[10px] font-black text-red-200 border border-red-400/30 flex items-center gap-1.5">
-            <i class="fa-solid fa-microchip text-red-400"></i> DIESEL PRECISO
-        </div>
+        <button type="button" id="btn-limpar-topo" class="bg-red-950/80 hover:bg-red-900 text-red-200 p-2.5 rounded-xl border border-red-400/30 flex items-center justify-center transition active:scale-95">
+            <i class="fa-solid fa-rotate text-xs"></i>
+        </button>
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
@@ -44,13 +40,18 @@
                 <span>Código do Filtro ou Veículo</span>
                 <span class="text-red-500 font-normal italic text-[10px]">Combustível • Óleo • Ar • Racor</span>
             </label>
-            <div class="relative">
-                <input type="text" id="input-busca" placeholder="EX: PSC76, PSC75, FS1000, PEL120..." class="w-full bg-slate-950 border border-slate-800 p-4 rounded-2xl font-black text-red-400 placeholder:text-slate-600 text-lg uppercase focus:outline-none focus:ring-2 focus:ring-red-500 transition">
-                <button type="button" onclick="buscarFiltro()" class="absolute right-2 top-2 bottom-2 bg-red-600 hover:bg-red-500 text-white px-5 rounded-xl font-bold text-sm flex items-center gap-2 transition active:scale-95 shadow-lg">
+            <div class="relative flex items-center">
+                <input type="text" id="input-busca" placeholder="EX: PSC76, PSC75, FS1000, PEL120..." class="w-full bg-slate-950 border border-slate-800 p-4 pr-16 rounded-2xl font-black text-red-400 placeholder:text-slate-600 text-lg uppercase focus:outline-none focus:ring-2 focus:ring-red-500 transition">
+                <button type="button" id="btn-buscar" class="absolute right-2 bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition active:scale-95 shadow-lg">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
-            <p class="text-[10px] text-slate-500 italic">Digite qualquer marca (Tecfil, Mann, Fleetguard, Donaldson, Mahle, Racor, Wega) ou modelo do caminhão.</p>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 italic">
+                <span>Digite qualquer marca ou modelo do caminhão.</span>
+                <button type="button" id="btn-limpar-texto" class="text-red-400 hover:underline font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-arrows-rotate text-[9px]"></i> Limpar Cache
+                </button>
+            </div>
         </div>
 
         <!-- ÁREA DE EXIBIÇÃO DE RESULTADOS -->
@@ -61,7 +62,7 @@
     </main>
 
     <script>
-        // BASE TÉCNICA DE ALTA PRECISÃO
+        // BASE TÉCNICA
         const BASE_FILTROS = [
             // FILTROS DE COMBUSTÍVEL
             {
@@ -185,28 +186,122 @@
             }
         ];
 
-        function buscarFiltro() {
-            const inputEl = document.getElementById('input-busca');
-            const container = document.getElementById('container-resultado');
-            if (!inputEl || !container) return;
+        function executarBusca() {
+            var input = document.getElementById('input-busca');
+            var container = document.getElementById('container-resultado');
+            if (!input || !container) return;
 
-            const termo = inputEl.value.toUpperCase().trim();
-
+            var termo = input.value.toUpperCase().trim();
             if (!termo) {
                 alert('Digite um código de filtro ou aplicação!');
                 return;
             }
 
-            container.innerHTML = `
-                <div class="text-center py-8 text-slate-400 space-y-2">
-                    <i class="fa-solid fa-spinner fa-spin text-2xl text-red-500"></i>
-                    <p class="text-xs font-bold uppercase tracking-wider">Verificando especificações técnicas...</p>
-                </div>
-            `;
+            var buscaLimpa = termo.replace(/[^A-Z0-9]/g, '');
 
-            const buscaLimpa = termo.replace(/[^A-Z0-9]/g, '');
+            var resultados = BASE_FILTROS.filter(function(f) {
+                var bateuCodigo = f.codigosBusca.some(function(c) {
+                    return c.replace(/[^A-Z0-9]/g, '').indexOf(buscaLimpa) !== -1;
+                });
+                var bateuPrincipal = f.principal.replace(/[^A-Z0-9]/g, '').indexOf(buscaLimpa) !== -1;
+                var bateuVeiculo = f.aplicacaoOficial.toUpperCase().indexOf(termo) !== -1;
+                var bateuMotor = f.motor.toUpperCase().indexOf(termo) !== -1;
 
-            const resultados = BASE_FILTROS.filter(f => {
-                const bateuCodigo = f.codigosBusca.some(c => c.replace(/[^A-Z0-9]/g, '').includes(buscaLimpa));
-                const bateuPrincipal = f.principal.replace(/[^A-Z0-9]/g, '').includes(buscaLimpa);
-                const bateuVe
+                return bateuCodigo || bateuPrincipal || bateuVeiculo || bateuMotor;
+            });
+
+            container.innerHTML = '';
+
+            if (resultados.length > 0) {
+                resultados.forEach(function(item) {
+                    var equivalenciasHTML = '';
+                    for (var marca in item.equivalencias) {
+                        var cod = item.equivalencias[marca];
+                        equivalenciasHTML += '<div onclick="window.copiarTxt(\'' + cod + '\')" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-red-500 transition">' +
+                            '<span class="text-[11px] font-bold text-slate-400">' + marca + '</span>' +
+                            '<strong class="text-xs font-black text-white font-mono">' + cod + ' <i class="fa-regular fa-copy text-[10px] text-slate-500"></i></strong>' +
+                            '</div>';
+                    }
+
+                    var html = '<div class="bg-slate-900 border border-red-500/30 p-5 rounded-3xl shadow-2xl space-y-4">' +
+                        '<div class="flex justify-between items-start border-b border-slate-800 pb-3">' +
+                            '<div>' +
+                                '<div class="flex items-center gap-2">' +
+                                    '<span class="text-[9px] font-black bg-red-950 text-red-400 px-2.5 py-0.5 rounded-full border border-red-800 uppercase">ALCANTARA\'S DIESEL</span>' +
+                                    '<span class="text-[9px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full uppercase">' + item.categoria + '</span>' +
+                                '</div>' +
+                                '<h2 class="text-xl font-black italic text-red-500 mt-1.5">' + item.principal + '</h2>' +
+                                '<p class="text-[11px] text-slate-300 font-semibold">' + item.tipo + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2">' +
+                            '<div><span class="text-[10px] font-bold text-red-400 uppercase block">Motorização Exata</span><p class="text-xs font-black text-slate-100">' + item.motor + '</p></div>' +
+                            '<div class="pt-2 border-t border-slate-800"><span class="text-[10px] font-bold text-slate-400 uppercase block">Aplicação em Veículos</span><p class="text-xs font-medium text-slate-300 leading-relaxed">' + item.aplicacaoOficial + '</p></div>' +
+                        '</div>' +
+                        '<div class="space-y-2"><span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide block">Conversão Cruzada (Toque p/ copiar)</span><div class="grid grid-cols-1 gap-1.5">' + equivalenciasHTML + '</div></div>' +
+                        '<button type="button" onclick="window.copiarResumo(\'' + item.principal + '\', \'' + item.motor + '\', \'' + item.aplicacaoOficial + '\')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3.5 rounded-2xl border border-slate-700 transition uppercase text-xs flex items-center justify-center gap-2">' +
+                            '<i class="fa-solid fa-share-nodes text-red-400"></i> Copiar Resumo para WhatsApp' +
+                        '</button>' +
+                    '</div>';
+
+                    container.innerHTML += html;
+                });
+            } else {
+                container.innerHTML = '<div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-3 text-center shadow-xl">' +
+                    '<i class="fa-solid fa-circle-exclamation text-amber-500 text-3xl"></i>' +
+                    '<h3 class="font-black text-slate-200 text-sm">Filtro "' + termo + '" não localizado</h3>' +
+                    '<p class="text-xs text-slate-400 leading-relaxed">Verifique se digitou o código correto ou pesquise pelo modelo do motor (ex: Cummins, Cargo, Constellation).</p>' +
+                    '<button type="button" onclick="window.copiarTxt(\'' + termo + '\')" class="bg-slate-800 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-2 mx-auto"><i class="fa-solid fa-copy text-red-400"></i> Copiar Código</button>' +
+                '</div>';
+            }
+        }
+
+        window.copiarTxt = function(txt) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(txt);
+            }
+            alert('Copiado: ' + txt);
+        };
+
+        window.copiarResumo = function(filtro, motor, aplicacao) {
+            var txt = "*Alcantara's Diesel - Consulta de Filtro*\n\n📌 *Filtro Ref:* " + filtro + "\n⚙️ *Motor:* " + motor + "\n🚛 *Aplicação:* " + aplicacao;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(txt);
+            }
+            alert('Resumo copiado! Pode colar no WhatsApp.');
+        };
+
+        function resetarCache() {
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) { caches.delete(name); });
+                });
+            }
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('Cache limpo! Recarregando...');
+            window.location.reload(true);
+        }
+
+        // VINCULAÇÃO DIRETA DE EVENTOS (EVITA FALHAS DE CLIQUE)
+        window.onload = function() {
+            var btnBuscar = document.getElementById('btn-buscar');
+            var inputBusca = document.getElementById('input-busca');
+            var btnLimparTopo = document.getElementById('btn-limpar-topo');
+            var btnLimparTexto = document.getElementById('btn-limpar-texto');
+
+            if (btnBuscar) btnBuscar.onclick = executarBusca;
+            if (btnLimparTopo) btnLimparTopo.onclick = resetarCache;
+            if (btnLimparTexto) btnLimparTexto.onclick = resetarCache;
+
+            if (inputBusca) {
+                inputBusca.onkeyup = function(e) {
+                    if (e.key === 'Enter' || e.keyCode === 13) {
+                        executarBusca();
+                    }
+                };
+            }
+        };
+    </script>
+</body>
+</html>
