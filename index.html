@@ -25,7 +25,7 @@
             <h1 class="text-lg font-black italic tracking-wider text-white flex items-center gap-2">
                 <i class="fa-solid fa-filter text-red-200"></i> CONVERSOR DE FILTROS
             </h1>
-            <p class="text-[10px] text-red-100/80 uppercase font-bold tracking-widest">Alcantara's Diesel - Linha Pesada & Eletrônica</p>
+            <p class="text-[10px] text-red-100/80 uppercase font-bold tracking-widest">Alcantara's Diesel - Consulta IA Online</p>
         </div>
         <button type="button" id="btn-limpar-topo" class="bg-red-950/80 hover:bg-red-900 text-red-200 p-2.5 rounded-xl border border-red-400/30 flex items-center justify-center transition active:scale-95">
             <i class="fa-solid fa-rotate text-xs"></i>
@@ -37,17 +37,17 @@
         <!-- CAIXA DE BUSCA PRINCIPAL -->
         <div class="bg-slate-900/90 p-5 rounded-3xl shadow-2xl border border-slate-800 space-y-3 backdrop-blur-md">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wide flex justify-between">
-                <span>Código do Filtro ou Veículo</span>
-                <span class="text-red-500 font-normal italic text-[10px]">Combustível • Óleo • Ar • Racor</span>
+                <span>Código do Filtro, Motor ou Veículo</span>
+                <span class="text-red-500 font-normal italic text-[10px]">IA Online Gemini</span>
             </label>
             <div class="relative flex items-center">
-                <input type="text" id="input-busca" placeholder="EX: PSC76, PSC75, FS1000, PEL120..." class="w-full bg-slate-950 border border-slate-800 p-4 pr-16 rounded-2xl font-black text-red-400 placeholder:text-slate-600 text-lg uppercase focus:outline-none focus:ring-2 focus:ring-red-500 transition">
+                <input type="text" id="input-busca" placeholder="EX: PSC76, FS1000, P550774, ISB 5.9..." class="w-full bg-slate-950 border border-slate-800 p-4 pr-16 rounded-2xl font-black text-red-400 placeholder:text-slate-600 text-lg uppercase focus:outline-none focus:ring-2 focus:ring-red-500 transition">
                 <button type="button" id="btn-buscar" class="absolute right-2 bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition active:scale-95 shadow-lg">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
             <div class="flex justify-between items-center text-[10px] text-slate-500 italic">
-                <span>Digite qualquer marca ou modelo do caminhão.</span>
+                <span>Pesquisa em tempo real qualquer filtro ou caminhão.</span>
                 <button type="button" id="btn-limpar-texto" class="text-red-400 hover:underline font-semibold flex items-center gap-1">
                     <i class="fa-solid fa-arrows-rotate text-[9px]"></i> Limpar Cache
                 </button>
@@ -62,131 +62,9 @@
     </main>
 
     <script>
-        // BASE TÉCNICA
-        const BASE_FILTROS = [
-            // FILTROS DE COMBUSTÍVEL
-            {
-                codigosBusca: ["PSC76", "PSC 76", "WK954/1X", "WK9541X", "FF5488", "P550774", "3959612", "FCD2238", "KC618", "RC380"],
-                principal: "TECFIL PSC76",
-                categoria: "Combustível (Injeção Eletrônica)",
-                tipo: "Filtro de Combustível Blindado (Diesel / High-Pressure)",
-                motor: "Cummins ISC 8.3L / ISL 8.9L (6 Cilindros Eletrônico)",
-                aplicacaoOficial: "Ford Cargo 1932, 2632, 3133, 4432, 4532, 5032 | VW Constellation 19.320, 25.320, 31.320, 19.390, 25.390, 31.390 | Ônibus VW 18.320 EOT",
-                equivalencias: {
-                    "TECFIL": "PSC76",
-                    "MANN-FILTER": "WK 954/1X / WK 930/6X",
-                    "FLEETGUARD": "FF5488 (Ref. Cummins 3959612)",
-                    "DONALDSON": "P550774",
-                    "PARKER / RACOR": "RC380",
-                    "MAHLE": "KC 618",
-                    "WEGA": "FCD-2238",
-                    "FRAM": "P10275 / P8264",
-                    "HENGST": "H353WK"
-                }
-            },
-            {
-                codigosBusca: ["PSC75", "PSC 75", "WK950/16", "WK95016", "FF5421", "P550425", "BG6X9155AA", "FCD2068", "KC214D", "RC378"],
-                principal: "TECFIL PSC75",
-                categoria: "Combustível (Common Rail)",
-                tipo: "Filtro de Combustível Diesel (Injeção Eletrônica)",
-                motor: "Cummins ISB 3.9L (4 Cil) / ISB 5.9L (6 Cil) / MWM International 4.08 TCE",
-                aplicacaoOficial: "Ford Cargo 815e, 1317e, 1517e, 1717e, 2428e, 2628e | VW Delivery 8.150e, 9.150e | VW Constellation 13.180e, 15.180e, 24.250e",
-                equivalencias: {
-                    "TECFIL": "PSC75",
-                    "MANN-FILTER": "WK 950/16",
-                    "FLEETGUARD": "FF5421 (Ref. Cummins 4897833)",
-                    "DONALDSON": "P550425",
-                    "PARKER / RACOR": "RC378",
-                    "MAHLE": "KC 214D",
-                    "WEGA": "FCD-2068",
-                    "HENGST": "H214WK"
-                }
-            },
-            {
-                codigosBusca: ["PSD470/1", "PSD4701", "R90-30M", "R9030M", "WK1060/1", "FS19732", "P550848", "FSD2207", "KC297D"],
-                principal: "TECFIL PSD470/1",
-                categoria: "Separador de Água / Racor",
-                tipo: "Filtro Separador de Água do Diesel (Sedimentador)",
-                motor: "Cummins ISB / ISC / ISL / MWM Acteon / MaxxForce",
-                aplicacaoOficial: "Ford Cargo Eletrônico (Todos) | VW Constellation & Delivery Eletrônicos | Agrale Micro-ônibus",
-                equivalencias: {
-                    "TECFIL": "PSD470/1",
-                    "PARKER / RACOR": "R90-30M / R90-30M-01",
-                    "MANN-FILTER": "WK 1060/1",
-                    "FLEETGUARD": "FS19732",
-                    "DONALDSON": "P550848",
-                    "WEGA": "FSD-2207",
-                    "MAHLE": "KC 297D"
-                }
-            },
-            {
-                codigosBusca: ["FS1000", "FS 1000", "P551000", "WK1040/1", "PSD950", "R120P", "FSD2051"],
-                principal: "FLEETGUARD FS1000",
-                categoria: "Separador de Água / Racor",
-                tipo: "Filtro Separador de Água e Combustível (Alta Capacidade)",
-                motor: "Cummins 6CT 8.3 / NTA855 / ISM / QSM11 / Caterpillar",
-                aplicacaoOficial: "Ford Cargo Mecânico 1630, 2422, 3224, 4030 | VW Mecânico 16.300, 31.310 | Geradores e Máquinas Pesadas",
-                equivalencias: {
-                    "FLEETGUARD": "FS1000 (Ref. Cummins 3329289)",
-                    "TECFIL": "PSD950",
-                    "DONALDSON": "P551000",
-                    "MANN-FILTER": "WK 1040/1",
-                    "PARKER / RACOR": "R120P",
-                    "WEGA": "FSD-2051"
-                }
-            },
-            {
-                codigosBusca: ["PEL120", "PEL 120", "HU951/1X", "HU9511X", "LF16015", "P550632", "OX345/7D", "WOE620"],
-                principal: "TECFIL PEL120",
-                categoria: "Óleo Lubrificante do Motor",
-                tipo: "Elemento Filtrante / Refil de Óleo do Motor",
-                motor: "Mercedes-Benz OM 904 LA / OM 906 LA / OM 924 LA / OM 926 LA",
-                aplicacaoOficial: "Mercedes-Benz Atego 1418, 1518, 1725, 2425 | Accelo 815, 915, 1016 | Axor 1933, 2533 | Ônibus OF-1418, OF-1722",
-                equivalencias: {
-                    "TECFIL": "PEL120",
-                    "MANN-FILTER": "HU 951/1 X",
-                    "FLEETGUARD": "LF16015",
-                    "DONALDSON": "P550632",
-                    "MAHLE": "OX 345/7D",
-                    "WEGA": "WOE-620",
-                    "HENGST": "E154HD48"
-                }
-            },
-            {
-                codigosBusca: ["PSL280", "PSL 280", "W962", "W962/7", "LF3970", "P550520", "OC275", "WO460"],
-                principal: "TECFIL PSL280",
-                categoria: "Óleo Lubrificante do Motor",
-                tipo: "Filtro de Óleo Blindado Spin-On (Rosca 1-14 UN)",
-                motor: "Cummins ISB 3.9L / 5.9L / MWM 4.10TCA / 6.10TCA",
-                aplicacaoOficial: "Ford Cargo 815, 1317, 1517, 1721, 2422 | VW Worker 8.150, 9.150, 13.180, 15.180, 17.210, 23.210",
-                equivalencias: {
-                    "TECFIL": "PSL280",
-                    "MANN-FILTER": "W 962 / W 962/7",
-                    "FLEETGUARD": "LF3970 / LF16015",
-                    "DONALDSON": "P550520",
-                    "MAHLE": "OC 275",
-                    "WEGA": "WO-460"
-                }
-            },
-            {
-                codigosBusca: ["AP8843", "AP 8843", "C27844", "C27844/1", "AF25627", "P533781", "LX1812", "WAP269"],
-                principal: "TECFIL AP8843",
-                categoria: "Ar do Motor (Primário)",
-                tipo: "Filtro de Ar Primário Tipo Cilíndrico",
-                motor: "Cummins ISB / ISC / ISL / MWM Acteon",
-                aplicacaoOficial: "Ford Cargo Eletrônico 1317e, 1517e, 1717e, 2428e, 1932e, 2632e | VW Constellation 13.180, 15.180, 24.250",
-                equivalencias: {
-                    "TECFIL": "AP8843",
-                    "MANN-FILTER": "C 27 844 / C 27 844/1",
-                    "FLEETGUARD": "AF25627",
-                    "DONALDSON": "P533781",
-                    "MAHLE": "LX 1812",
-                    "WEGA": "WAP-269"
-                }
-            }
-        ];
+        const GEMINI_API_KEY = "AQ.Ab8RN6LvFe6D9VEmRitdTV2kKUw8hNirY3UYHStc73oHBTmsHg";
 
-        function executarBusca() {
+        async function buscarOnline() {
             var input = document.getElementById('input-busca');
             var container = document.getElementById('container-resultado');
             if (!input || !container) return;
@@ -197,78 +75,119 @@
                 return;
             }
 
-            var buscaLimpa = termo.replace(/[^A-Z0-9]/g, '');
+            container.innerHTML = '<div class="text-center py-8 text-slate-400 space-y-2">' +
+                '<i class="fa-solid fa-spinner fa-spin text-2xl text-red-500"></i>' +
+                '<p class="text-xs font-bold uppercase tracking-wider">Consultando catálogo técnico online para "' + termo + '"...</p>' +
+            '</div>';
 
-            var resultados = BASE_FILTROS.filter(function(f) {
-                var bateuCodigo = f.codigosBusca.some(function(c) {
-                    return c.replace(/[^A-Z0-9]/g, '').indexOf(buscaLimpa) !== -1;
+            const prompt = `Você é um engenheiro especialista em filtros automotivos e de motores diesel (linha pesada, agrícola, utilitários e geradores).
+O usuário pesquisou pelo termo: "${termo}".
+Analise de qual filtro se trata e responda EXCLUSIVAMENTE em formato JSON VÁLIDO (sem bloco de código markdown, sem \`\`\`json).
+
+Estrutura exata do JSON:
+{
+  "principal": "Código e Marca Principal (ex: TECFIL PSC76)",
+  "categoria": "Combustível, Óleo, Ar ou Separador Racor",
+  "tipo": "Descrição detalhada (ex: Filtro Blindado Diesel Injeção Eletrônica)",
+  "motor": "Motorização exata (ex: Cummins ISC 8.3L / ISL 8.9L)",
+  "aplicacaoOficial": "Lista de veículos e modelos compatíveis (ex: Ford Cargo 1932, 2632 | VW Constellation 19.320, 25.320)",
+  "equivalencias": {
+    "TECFIL": "Código",
+    "MANN-FILTER": "Código",
+    "FLEETGUARD": "Código",
+    "DONALDSON": "Código",
+    "PARKER / RACOR": "Código",
+    "MAHLE": "Código",
+    "WEGA": "Código",
+    "FRAM": "Código"
+  }
+}
+
+Regras rígidas de engenharia:
+1. Certifique-se de diferenciar motores da mesma família (ex: Cummins ISB 3.9/5.9 vs Cummins ISC 8.3 / ISL 8.9).
+2. Se o código inserido for de alguma marca específica (como Donaldson, Fleetguard, Mann, etc.), traga as conversões equivalentes exatas das outras marcas.`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
                 });
-                var bateuPrincipal = f.principal.replace(/[^A-Z0-9]/g, '').indexOf(buscaLimpa) !== -1;
-                var bateuVeiculo = f.aplicacaoOficial.toUpperCase().indexOf(termo) !== -1;
-                var bateuMotor = f.motor.toUpperCase().indexOf(termo) !== -1;
 
-                return bateuCodigo || bateuPrincipal || bateuVeiculo || bateuMotor;
-            });
+                if (!response.ok) {
+                    throw new Error('Falha na conexão online.');
+                }
 
-            container.innerHTML = '';
+                const data = await response.json();
+                let textResult = data.candidates[0].content.parts[0].text;
+                
+                textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
+                const item = JSON.parse(textResult);
 
-            if (resultados.length > 0) {
-                resultados.forEach(function(item) {
-                    var equivalenciasHTML = '';
-                    for (var marca in item.equivalencias) {
-                        var cod = item.equivalencias[marca];
-                        equivalenciasHTML += '<div onclick="window.copiarTxt(\'' + cod + '\')" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-red-500 transition">' +
-                            '<span class="text-[11px] font-bold text-slate-400">' + marca + '</span>' +
-                            '<strong class="text-xs font-black text-white font-mono">' + cod + ' <i class="fa-regular fa-copy text-[10px] text-slate-500"></i></strong>' +
-                            '</div>';
-                    }
+                container.innerHTML = '';
+                renderizarCard(item, "RESULTADO IA ONLINE");
 
-                    var html = '<div class="bg-slate-900 border border-red-500/30 p-5 rounded-3xl shadow-2xl space-y-4">' +
-                        '<div class="flex justify-between items-start border-b border-slate-800 pb-3">' +
-                            '<div>' +
-                                '<div class="flex items-center gap-2">' +
-                                    '<span class="text-[9px] font-black bg-red-950 text-red-400 px-2.5 py-0.5 rounded-full border border-red-800 uppercase">ALCANTARA\'S DIESEL</span>' +
-                                    '<span class="text-[9px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full uppercase">' + item.categoria + '</span>' +
-                                '</div>' +
-                                '<h2 class="text-xl font-black italic text-red-500 mt-1.5">' + item.principal + '</h2>' +
-                                '<p class="text-[11px] text-slate-300 font-semibold">' + item.tipo + '</p>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2">' +
-                            '<div><span class="text-[10px] font-bold text-red-400 uppercase block">Motorização Exata</span><p class="text-xs font-black text-slate-100">' + item.motor + '</p></div>' +
-                            '<div class="pt-2 border-t border-slate-800"><span class="text-[10px] font-bold text-slate-400 uppercase block">Aplicação em Veículos</span><p class="text-xs font-medium text-slate-300 leading-relaxed">' + item.aplicacaoOficial + '</p></div>' +
-                        '</div>' +
-                        '<div class="space-y-2"><span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide block">Conversão Cruzada (Toque p/ copiar)</span><div class="grid grid-cols-1 gap-1.5">' + equivalenciasHTML + '</div></div>' +
-                        '<button type="button" onclick="window.copiarResumo(\'' + item.principal + '\', \'' + item.motor + '\', \'' + item.aplicacaoOficial + '\')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3.5 rounded-2xl border border-slate-700 transition uppercase text-xs flex items-center justify-center gap-2">' +
-                            '<i class="fa-solid fa-share-nodes text-red-400"></i> Copiar Resumo para WhatsApp' +
-                        '</button>' +
-                    '</div>';
-
-                    container.innerHTML += html;
-                });
-            } else {
+            } catch (err) {
+                console.error(err);
                 container.innerHTML = '<div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-3 text-center shadow-xl">' +
-                    '<i class="fa-solid fa-circle-exclamation text-amber-500 text-3xl"></i>' +
-                    '<h3 class="font-black text-slate-200 text-sm">Filtro "' + termo + '" não localizado</h3>' +
-                    '<p class="text-xs text-slate-400 leading-relaxed">Verifique se digitou o código correto ou pesquise pelo modelo do motor (ex: Cummins, Cargo, Constellation).</p>' +
-                    '<button type="button" onclick="window.copiarTxt(\'' + termo + '\')" class="bg-slate-800 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-2 mx-auto"><i class="fa-solid fa-copy text-red-400"></i> Copiar Código</button>' +
+                    '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl"></i>' +
+                    '<h3 class="font-black text-slate-200 text-sm">Erro na consulta online</h3>' +
+                    '<p class="text-xs text-slate-400 leading-relaxed">Não foi possível consultar o filtro "' + termo + '". Verifique sua conexão com a internet ou tente novamente.</p>' +
                 '</div>';
             }
         }
 
-        window.copiarTxt = function(txt) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(txt);
+        function renderizarCard(item, fonte) {
+            var container = document.getElementById('container-resultado');
+            var equivalenciasHTML = '';
+            
+            if (item.equivalencias) {
+                for (var marca in item.equivalencias) {
+                    var cod = item.equivalencias[marca];
+                    if (cod) {
+                        equivalenciasHTML += '<div onclick="window.copiarTxt(\'' + cod + '\')" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-red-500 transition">' +
+                            '<span class="text-[11px] font-bold text-slate-400">' + marca + '</span>' +
+                            '<strong class="text-xs font-black text-white font-mono">' + cod + ' <i class="fa-regular fa-copy text-[10px] text-slate-500"></i></strong>' +
+                        '</div>';
+                    }
+                }
             }
+
+            var html = '<div class="bg-slate-900 border border-red-500/30 p-5 rounded-3xl shadow-2xl space-y-4">' +
+                '<div class="flex justify-between items-start border-b border-slate-800 pb-3">' +
+                    '<div>' +
+                        '<div class="flex items-center gap-2">' +
+                            '<span class="text-[9px] font-black bg-red-950 text-red-400 px-2.5 py-0.5 rounded-full border border-red-800 uppercase">' + fonte + '</span>' +
+                            '<span class="text-[9px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full uppercase">' + (item.categoria || 'FILTRO') + '</span>' +
+                        '</div>' +
+                        '<h2 class="text-xl font-black italic text-red-500 mt-1.5">' + (item.principal || 'RESULTADO') + '</h2>' +
+                        '<p class="text-[11px] text-slate-300 font-semibold">' + (item.tipo || '') + '</p>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2">' +
+                    '<div><span class="text-[10px] font-bold text-red-400 uppercase block">Motorização Exata</span><p class="text-xs font-black text-slate-100">' + (item.motor || 'N/A') + '</p></div>' +
+                    '<div class="pt-2 border-t border-slate-800"><span class="text-[10px] font-bold text-slate-400 uppercase block">Aplicação em Veículos</span><p class="text-xs font-medium text-slate-300 leading-relaxed">' + (item.aplicacaoOficial || 'N/A') + '</p></div>' +
+                '</div>' +
+                '<div class="space-y-2"><span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide block">Conversão Cruzada (Toque p/ copiar)</span><div class="grid grid-cols-1 gap-1.5">' + equivalenciasHTML + '</div></div>' +
+                '<button type="button" onclick="window.copiarResumo(\'' + item.principal + '\', \'' + item.motor + '\', \'' + item.aplicacaoOficial + '\')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3.5 rounded-2xl border border-slate-700 transition uppercase text-xs flex items-center justify-center gap-2">' +
+                    '<i class="fa-solid fa-share-nodes text-red-400"></i> Copiar Resumo para WhatsApp' +
+                '</button>' +
+            '</div>';
+
+            container.innerHTML = html;
+        }
+
+        window.copiarTxt = function(txt) {
+            if (navigator.clipboard) navigator.clipboard.writeText(txt);
             alert('Copiado: ' + txt);
         };
 
         window.copiarResumo = function(filtro, motor, aplicacao) {
             var txt = "*Alcantara's Diesel - Consulta de Filtro*\n\n📌 *Filtro Ref:* " + filtro + "\n⚙️ *Motor:* " + motor + "\n🚛 *Aplicação:* " + aplicacao;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(txt);
-            }
-            alert('Resumo copiado! Pode colar no WhatsApp.');
+            if (navigator.clipboard) navigator.clipboard.writeText(txt);
+            alert('Resumo copiado!');
         };
 
         function resetarCache() {
@@ -279,26 +198,23 @@
             }
             localStorage.clear();
             sessionStorage.clear();
-            alert('Cache limpo! Recarregando...');
+            alert('Cache limpo!');
             window.location.reload(true);
         }
 
-        // VINCULAÇÃO DIRETA DE EVENTOS (EVITA FALHAS DE CLIQUE)
         window.onload = function() {
             var btnBuscar = document.getElementById('btn-buscar');
             var inputBusca = document.getElementById('input-busca');
             var btnLimparTopo = document.getElementById('btn-limpar-topo');
             var btnLimparTexto = document.getElementById('btn-limpar-texto');
 
-            if (btnBuscar) btnBuscar.onclick = executarBusca;
+            if (btnBuscar) btnBuscar.onclick = buscarOnline;
             if (btnLimparTopo) btnLimparTopo.onclick = resetarCache;
             if (btnLimparTexto) btnLimparTexto.onclick = resetarCache;
 
             if (inputBusca) {
                 inputBusca.onkeyup = function(e) {
-                    if (e.key === 'Enter' || e.keyCode === 13) {
-                        executarBusca();
-                    }
+                    if (e.key === 'Enter' || e.keyCode === 13) buscarOnline();
                 };
             }
         };
