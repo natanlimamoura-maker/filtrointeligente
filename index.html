@@ -61,6 +61,13 @@ textarea{resize:vertical;min-height:70px}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(30px);background:#fff;color:#000;padding:12px 18px;border-radius:14px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90%}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .hint{font-size:11px;color:var(--mut);line-height:1.5;margin-top:8px}
+#banner-inst{display:none;background:#450a0a;border:1px solid #7f1d1d;border-radius:18px;padding:14px;margin-bottom:14px}
+#banner-inst b{display:block;font-size:14px;margin-bottom:4px}
+#banner-inst p{margin:0 0 10px;font-size:12px;color:#fecaca;line-height:1.5}
+#banner-inst .bb{display:flex;gap:8px}
+#banner-inst button{flex:1;padding:11px;border-radius:12px;font-weight:800;font-size:13px;border:1px solid #7f1d1d}
+#bi-ok{background:var(--red);color:#fff;border-color:var(--red)!important}
+#bi-fechar{background:transparent;color:#fecaca}
 .hide{display:none!important}
 #print-area{display:none}
 @media print{
@@ -91,6 +98,14 @@ textarea{resize:vertical;min-height:70px}
 </header>
 
 <main>
+  <div id="banner-inst">
+    <b>📲 Instale o app no seu celular</b>
+    <p id="bi-txt"></p>
+    <div class="bb">
+      <button id="bi-ok" type="button">Instalar agora</button>
+      <button id="bi-fechar" type="button">Agora não</button>
+    </div>
+  </div>
   <div class="tabs">
     <button class="tab on" id="tab-novo" type="button">Orçamento</button>
     <button class="tab" id="tab-salvos" type="button">Salvos (<span id="qtd-salvos">0</span>)</button>
@@ -418,13 +433,39 @@ $('arq-imp').onchange=function(e){
 };
 
 /* ---------- instalação (PWA) ---------- */
-var promptInst=null;
-window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();promptInst=e;$('btn-instalar').style.display='block'});
-$('btn-instalar').onclick=function(){
-  if(!promptInst)return;promptInst.prompt();
-  promptInst.userChoice.then(function(){promptInst=null;$('btn-instalar').style.display='none'});
-};
-window.addEventListener('appinstalled',function(){$('btn-instalar').style.display='none'});
+var promptInst=null, bi=$('banner-inst'), fechado=false;
+var standalone=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
+try{fechado=localStorage.getItem('alc_bi_fechado')==='1'}catch(e){}
+function escondeInst(){bi.style.display='none';$('btn-instalar').style.display='none'}
+function mostrarBanner(){
+  if(standalone||fechado)return;
+  bi.style.display='block';
+  $('bi-txt').textContent=promptInst
+    ?'Instale para abrir direto da tela inicial e usar mesmo sem internet.'
+    :'Toque nos 3 pontinhos ⋮ do Chrome (canto de cima) e escolha "Instalar app" ou "Adicionar à tela inicial".';
+  $('bi-ok').style.display=promptInst?'block':'none';
+}
+function instalar(){
+  if(!promptInst){mostrarBanner();return}
+  var p=promptInst;promptInst=null;p.prompt();
+  p.userChoice.then(function(r){if(r&&r.outcome==='accepted')escondeInst();else mostrarBanner()});
+}
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();promptInst=e;
+  if(!standalone)$('btn-instalar').style.display='block';
+  mostrarBanner();
+});
+window.addEventListener('appinstalled',escondeInst);
+$('btn-instalar').onclick=instalar;
+$('bi-ok').onclick=instalar;
+$('bi-fechar').onclick=function(){bi.style.display='none';try{localStorage.setItem('alc_bi_fechado','1')}catch(e){}};
+/* pede a instalação no primeiro toque na tela (o Chrome só permite após um toque) */
+document.addEventListener('click',function auto(e){
+  document.removeEventListener('click',auto,true);
+  if(promptInst&&!standalone&&!(e.target.closest&&e.target.closest('#banner-inst,#btn-instalar')))instalar();
+},true);
+/* se o Chrome não liberar o pedido, mostra como instalar manualmente */
+setTimeout(function(){if(!promptInst)mostrarBanner()},3500);
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
 }
