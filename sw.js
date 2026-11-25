@@ -1,6 +1,6 @@
 // Service worker: deixa o app funcionar offline.
 // Ao alterar qualquer arquivo do app, aumente o número da versão abaixo.
-const CACHE = 'orcamentos-alcantara-v1';
+const CACHE = 'orcamentos-alcantara-v2';
 const ARQUIVOS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
