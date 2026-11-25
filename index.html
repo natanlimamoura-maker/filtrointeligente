@@ -1,228 +1,439 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversor Técnico de Filtros - Alcantara's Diesel</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome para Ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#dc2626">
-
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orçamentos - Alcantara's Diesel</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#dc2626">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Orçamentos">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#020617;--card:#0f172a;--line:#1e293b;--txt:#f1f5f9;--mut:#94a3b8;--red:#dc2626;--red2:#ef4444;--ok:#16a34a}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,#b91c1c,#dc2626);padding:calc(14px + env(safe-area-inset-top)) 16px 12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+header h1{margin:0;font-size:17px;font-weight:900;font-style:italic;letter-spacing:.5px}
+header p{margin:2px 0 0;font-size:10px;text-transform:uppercase;letter-spacing:2px;font-weight:700;color:#fecaca}
+#btn-instalar{display:none;background:#450a0a;color:#fecaca;border:1px solid rgba(254,202,202,.3);border-radius:10px;padding:8px 12px;font-weight:700;font-size:12px}
+main{max-width:560px;margin:0 auto;padding:14px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--mut);font-weight:800;font-size:13px;text-transform:uppercase}
+.tab.on{background:var(--red);color:#fff;border-color:var(--red)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 12px;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut)}
+label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:12px;font-size:15px;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--red2);border-color:transparent}
+textarea{resize:vertical;min-height:70px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mb{margin-bottom:10px}
+.item{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:10px;margin-bottom:10px}
+.item .r1{display:grid;grid-template-columns:96px 1fr 38px;gap:8px;margin-bottom:8px}
+.item .r2{display:grid;grid-template-columns:70px 1fr auto;gap:8px;align-items:end}
+.item .sub{font-weight:900;font-family:ui-monospace,monospace;color:#fff;padding:12px 4px;text-align:right;min-width:92px}
+.item select,.item input{background:var(--card)}
+.del{background:#450a0a;color:#fca5a5;border:1px solid #7f1d1d;border-radius:10px;font-size:16px;font-weight:800}
+.btn{width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);background:#1e293b;color:var(--txt);font-weight:800;font-size:13px;text-transform:uppercase}
+.btn.red{background:var(--red);border-color:var(--red)}
+.btn.green{background:var(--ok);border-color:var(--ok)}
+.btn.dash{background:transparent;border:2px dashed #334155;color:var(--mut)}
+.btn:active{transform:scale(.98)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tot{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;color:var(--mut)}
+.tot b{color:var(--txt);font-family:ui-monospace,monospace}
+.tot.final{border-top:1px solid var(--line);margin-top:6px;padding-top:12px;font-size:16px;color:#fff;font-weight:800}
+.tot.final b{font-size:26px;color:var(--red2);font-weight:900}
+.desc-row{display:grid;grid-template-columns:110px 1fr;gap:8px;margin:8px 0}
+.saved{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.saved .n{font-size:11px;font-weight:900;color:var(--red2)}
+.saved .c{font-weight:800;font-size:16px}
+.saved .m{font-size:12px;color:var(--mut)}
+.saved .v{font-weight:900;font-family:ui-monospace,monospace;font-size:16px;white-space:nowrap}
+.sbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.sbtns button{padding:10px;border-radius:10px;border:1px solid var(--line);background:#1e293b;color:var(--txt);font-weight:700;font-size:12px}
+.sbtns .x{background:#450a0a;color:#fca5a5;border-color:#7f1d1d}
+.empty{text-align:center;color:var(--mut);padding:30px 10px;font-size:14px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(30px);background:#fff;color:#000;padding:12px 18px;border-radius:14px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90%}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.hint{font-size:11px;color:var(--mut);line-height:1.5;margin-top:8px}
+.hide{display:none!important}
+#print-area{display:none}
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  header,main,#toast{display:none!important}
+  #print-area{display:block;font-family:Arial,sans-serif;color:#000;padding:10mm}
+  #print-area h1{margin:0;font-size:22px}
+  #print-area .top{display:flex;justify-content:space-between;border-bottom:3px solid #b91c1c;padding-bottom:8px;margin-bottom:12px}
+  #print-area table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+  #print-area th,#print-area td{border:1px solid #999;padding:6px;text-align:left}
+  #print-area th{background:#eee}
+  #print-area td.r,#print-area th.r{text-align:right}
+  #print-area .tt{text-align:right;font-size:14px;line-height:1.7}
+  #print-area .tt .g{font-size:20px;font-weight:bold}
+  #print-area .sig{margin-top:50px;display:flex;gap:40px}
+  #print-area .sig div{flex:1;border-top:1px solid #000;text-align:center;padding-top:4px;font-size:12px}
+}
+</style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen pb-10 select-none">
+<body>
 
-    <!-- CABEÇALHO DA OFICINA -->
-    <header class="bg-gradient-to-r from-red-700 to-red-600 p-5 shadow-2xl flex justify-between items-center border-b border-red-500/30 sticky top-0 z-30">
-        <div>
-            <h1 class="text-lg font-black italic tracking-wider text-white flex items-center gap-2">
-                <i class="fa-solid fa-filter text-red-200"></i> CONVERSOR DE FILTROS
-            </h1>
-            <p class="text-[10px] text-red-100/80 uppercase font-bold tracking-widest">Alcantara's Diesel - Consulta Direta Gemini IA</p>
-        </div>
-        <button type="button" id="btn-limpar-topo" class="bg-red-950/80 hover:bg-red-900 text-red-200 p-2.5 rounded-xl border border-red-400/30 flex items-center justify-center transition active:scale-95">
-            <i class="fa-solid fa-rotate text-xs"></i>
-        </button>
-    </header>
+<header>
+  <div>
+    <h1>ORÇAMENTOS</h1>
+    <p>Alcantara's Diesel</p>
+  </div>
+  <button id="btn-instalar" type="button">📲 Instalar</button>
+</header>
 
-    <main class="max-w-md mx-auto p-4 space-y-4">
+<main>
+  <div class="tabs">
+    <button class="tab on" id="tab-novo" type="button">Orçamento</button>
+    <button class="tab" id="tab-salvos" type="button">Salvos (<span id="qtd-salvos">0</span>)</button>
+  </div>
 
-        <!-- CAIXA DE BUSCA PRINCIPAL -->
-        <div class="bg-slate-900/90 p-5 rounded-3xl shadow-2xl border border-slate-800 space-y-3 backdrop-blur-md">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide flex justify-between">
-                <span>Código do Filtro, Motor ou Veículo</span>
-                <span class="text-red-500 font-normal italic text-[10px]">Sem Backend / Sem Supabase</span>
-            </label>
-            <div class="relative flex items-center">
-                <input type="text" id="input-busca" placeholder="EX: WK1060/2, PSC76, FS1000..." class="w-full bg-slate-950 border border-slate-800 p-4 pr-16 rounded-2xl font-black text-red-400 placeholder:text-slate-600 text-lg uppercase focus:outline-none focus:ring-2 focus:ring-red-500 transition">
-                <button type="button" id="btn-buscar" class="absolute right-2 bg-red-600 hover:bg-red-500 text-white px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition active:scale-95 shadow-lg">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-            <div class="flex justify-between items-center text-[10px] text-slate-500 italic">
-                <span>Digite qualquer código para consultar online.</span>
-                <button type="button" id="btn-limpar-texto" class="text-red-400 hover:underline font-semibold flex items-center gap-1">
-                    <i class="fa-solid fa-arrows-rotate text-[9px]"></i> Limpar Cache
-                </button>
-            </div>
-        </div>
+  <!-- ========== TELA: ORÇAMENTO ========== -->
+  <section id="tela-novo">
+    <div class="card">
+      <h2>Orçamento nº <span id="numero" style="color:var(--red2)">0001</span></h2>
+      <div class="mb"><label>Cliente</label><input id="cliente" placeholder="Nome do cliente" autocomplete="off"></div>
+      <div class="grid2 mb">
+        <div><label>Telefone (WhatsApp)</label><input id="telefone" inputmode="tel" placeholder="(11) 90000-0000"></div>
+        <div><label>Data</label><input id="data" type="date"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Veículo / Modelo</label><input id="veiculo" placeholder="Ex: Scania R440"></div>
+        <div><label>Placa</label><input id="placa" placeholder="ABC1D23" style="text-transform:uppercase"></div>
+      </div>
+    </div>
 
-        <!-- ÁREA DE EXIBIÇÃO DE RESULTADOS -->
-        <div id="container-resultado" class="space-y-4">
-            <!-- Resultados injetados via JS -->
-        </div>
+    <div class="card">
+      <h2>Peças e serviços</h2>
+      <div id="itens"></div>
+      <button class="btn dash" id="btn-add" type="button">+ Adicionar item</button>
+    </div>
 
-    </main>
+    <div class="card">
+      <h2>Total</h2>
+      <div class="tot"><span>Peças</span><b id="t-pecas">R$ 0,00</b></div>
+      <div class="tot"><span>Serviços</span><b id="t-serv">R$ 0,00</b></div>
+      <div class="tot"><span>Subtotal</span><b id="t-bruto">R$ 0,00</b></div>
+      <div class="desc-row">
+        <div><label>Desconto</label>
+          <select id="desc-tipo"><option value="valor">R$</option><option value="pct">%</option></select></div>
+        <div><label>&nbsp;</label><input id="desc-val" inputmode="decimal" placeholder="0,00"></div>
+      </div>
+      <div class="tot"><span>Desconto aplicado</span><b id="t-desc">- R$ 0,00</b></div>
+      <div class="tot final"><span>TOTAL</span><b id="t-total">R$ 0,00</b></div>
+    </div>
 
-    <script>
-        const GEMINI_API_KEY = "AQ.Ab8RN6LvFe6D9VEmRitdTV2kKUw8hNirY3UYHStc73oHBTmsHg";
+    <div class="card">
+      <h2>Observações</h2>
+      <textarea id="obs" placeholder="Prazo, garantia, forma de pagamento, validade do orçamento..."></textarea>
+    </div>
 
-        async function buscarOnline() {
-            var input = document.getElementById('input-busca');
-            var container = document.getElementById('container-resultado');
-            if (!input || !container) return;
+    <div class="btns mb">
+      <button class="btn red" id="btn-salvar" type="button">💾 Salvar</button>
+      <button class="btn green" id="btn-whats" type="button">WhatsApp</button>
+    </div>
+    <div class="btns">
+      <button class="btn" id="btn-imprimir" type="button">🖨️ Imprimir / PDF</button>
+      <button class="btn" id="btn-novo" type="button">+ Novo</button>
+    </div>
+  </section>
 
-            var termo = input.value.toUpperCase().trim();
-            if (!termo) {
-                alert('Digite um código de filtro ou aplicação!');
-                return;
-            }
+  <!-- ========== TELA: SALVOS ========== -->
+  <section id="tela-salvos" class="hide">
+    <div class="card"><input id="busca" placeholder="Buscar por cliente, placa, veículo ou nº..."></div>
+    <div id="lista"></div>
+    <div class="card">
+      <h2>Backup</h2>
+      <div class="btns">
+        <button class="btn" id="btn-exp" type="button">⬇ Exportar</button>
+        <button class="btn" id="btn-imp" type="button">⬆ Importar</button>
+      </div>
+      <input type="file" id="arq-imp" accept="application/json,.json" class="hide">
+      <p class="hint">Os orçamentos ficam salvos só neste aparelho. Exporte um backup de vez em quando para não perder se limpar os dados do navegador.</p>
+    </div>
+  </section>
+</main>
 
-            container.innerHTML = '<div class="text-center py-8 text-slate-400 space-y-2">' +
-                '<i class="fa-solid fa-spinner fa-spin text-2xl text-red-500"></i>' +
-                '<p class="text-xs font-bold uppercase tracking-wider">Consultando catálogo para "' + termo + '"...</p>' +
-            '</div>';
+<div id="print-area"></div>
+<div id="toast"></div>
 
-            const promptText = `Você é um engenheiro especialista em filtros automotivos e motores diesel (linha pesada, agrícola, utilitários e geradores).
-O usuário pesquisou pelo termo: "${termo}".
-Analise de qual filtro se trata e responda EXCLUSIVAMENTE em formato JSON VÁLIDO (sem bloco de código markdown, sem \`\`\`json).
+<script>
+(function(){
+'use strict';
 
-Estrutura exata do JSON:
-{
-  "principal": "Código e Marca Principal (ex: MANN WK 1060/2)",
-  "categoria": "Combustível, Óleo, Ar ou Separador Racor",
-  "tipo": "Descrição detalhada do filtro",
-  "motor": "Motorização exata",
-  "aplicacaoOficial": "Lista de veículos e modelos compatíveis",
-  "equivalencias": {
-    "TECFIL": "Código",
-    "MANN-FILTER": "Código",
-    "FLEETGUARD": "Código",
-    "DONALDSON": "Código",
-    "PARKER / RACOR": "Código",
-    "MAHLE": "Código",
-    "WEGA": "Código",
-    "FRAM": "Código"
+var K_LISTA='alcantara_orcamentos_v1', K_CONT='alcantara_contador_v1', K_RASC='alcantara_rascunho_v1';
+var $=function(id){return document.getElementById(id)};
+var atual=null;
+
+/* ---------- utilidades ---------- */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function num(v){
+  v=String(v==null?'':v).replace(/[^\d.,-]/g,'');
+  if(!v) return 0;
+  if(v.indexOf(',')>-1) v=v.replace(/\./g,'').replace(',','.');
+  var n=parseFloat(v);
+  return isFinite(n)?n:0;
+}
+function r2(n){return Math.round((n+Number.EPSILON)*100)/100}
+function brl(n){return r2(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function hoje(){var d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+function dataBR(s){if(!s)return '';var p=s.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:s}
+function pad(n){return String(n).padStart(4,'0')}
+function lerLS(k,def){try{var v=localStorage.getItem(k);return v?JSON.parse(v):def}catch(e){return def}}
+function gravarLS(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){toast('Sem espaço para salvar!');return false}}
+var tt;function toast(m){var t=$('toast');t.textContent=m;t.className='on';clearTimeout(tt);tt=setTimeout(function(){t.className=''},2200)}
+
+/* ---------- modelo ---------- */
+function proxNumero(){return (lerLS(K_CONT,0)||0)+1}
+function vazio(){
+  return {id:null,numero:proxNumero(),cliente:'',telefone:'',veiculo:'',placa:'',data:hoje(),
+    itens:[{tipo:'peca',desc:'',qtd:'1',valor:''}],descTipo:'valor',desc:'',obs:''};
+}
+function calcular(o){
+  var pecas=0,serv=0;
+  o.itens.forEach(function(it){
+    var s=num(it.qtd)*num(it.valor);
+    if(it.tipo==='servico') serv+=s; else pecas+=s;
+  });
+  pecas=r2(pecas);serv=r2(serv);
+  var bruto=r2(pecas+serv);
+  var d=num(o.desc);
+  d=o.descTipo==='pct'?bruto*d/100:d;
+  d=r2(Math.min(Math.max(d,0),bruto));
+  return {pecas:pecas,serv:serv,bruto:bruto,desc:d,total:r2(bruto-d)};
+}
+
+/* ---------- formulário ---------- */
+function lerCampos(){
+  atual.cliente=$('cliente').value;atual.telefone=$('telefone').value;atual.data=$('data').value;
+  atual.veiculo=$('veiculo').value;atual.placa=$('placa').value.toUpperCase();
+  atual.descTipo=$('desc-tipo').value;atual.desc=$('desc-val').value;atual.obs=$('obs').value;
+}
+function preencherCampos(){
+  $('numero').textContent=pad(atual.numero);
+  $('cliente').value=atual.cliente;$('telefone').value=atual.telefone;$('data').value=atual.data;
+  $('veiculo').value=atual.veiculo;$('placa').value=atual.placa;
+  $('desc-tipo').value=atual.descTipo;$('desc-val').value=atual.desc;$('obs').value=atual.obs;
+  desenharItens();totais();
+}
+function desenharItens(){
+  var h='';
+  atual.itens.forEach(function(it,i){
+    h+='<div class="item" data-i="'+i+'">'+
+      '<div class="r1"><select class="f-tipo"><option value="peca"'+(it.tipo==='peca'?' selected':'')+'>Peça</option><option value="servico"'+(it.tipo==='servico'?' selected':'')+'>Serviço</option></select>'+
+      '<input class="f-desc" placeholder="Descrição" value="'+esc(it.desc)+'">'+
+      '<button type="button" class="del" aria-label="Remover">✕</button></div>'+
+      '<div class="r2"><div><label>Qtd</label><input class="f-qtd" inputmode="decimal" value="'+esc(it.qtd)+'"></div>'+
+      '<div><label>Valor unit. (R$)</label><input class="f-valor" inputmode="decimal" placeholder="0,00" value="'+esc(it.valor)+'"></div>'+
+      '<div class="sub">'+brl(num(it.qtd)*num(it.valor))+'</div></div></div>';
+  });
+  $('itens').innerHTML=h;
+}
+function totais(){
+  var t=calcular(atual);
+  $('t-pecas').textContent=brl(t.pecas);$('t-serv').textContent=brl(t.serv);
+  $('t-bruto').textContent=brl(t.bruto);$('t-desc').textContent='- '+brl(t.desc);
+  $('t-total').textContent=brl(t.total);
+  atual.itens.forEach(function(it,i){
+    var el=$('itens').querySelector('.item[data-i="'+i+'"] .sub');
+    if(el) el.textContent=brl(num(it.qtd)*num(it.valor));
+  });
+}
+function mudou(){lerCampos();totais();gravarLS(K_RASC,atual)}
+
+$('itens').addEventListener('input',function(e){
+  var row=e.target.closest('.item');if(!row)return;
+  var it=atual.itens[+row.dataset.i];
+  if(e.target.classList.contains('f-desc'))it.desc=e.target.value;
+  if(e.target.classList.contains('f-qtd'))it.qtd=e.target.value;
+  if(e.target.classList.contains('f-valor'))it.valor=e.target.value;
+  mudou();
+});
+$('itens').addEventListener('change',function(e){
+  var row=e.target.closest('.item');if(!row)return;
+  if(e.target.classList.contains('f-tipo')){atual.itens[+row.dataset.i].tipo=e.target.value;mudou()}
+});
+$('itens').addEventListener('click',function(e){
+  var b=e.target.closest('.del');if(!b)return;
+  var i=+b.closest('.item').dataset.i;
+  atual.itens.splice(i,1);
+  if(!atual.itens.length)atual.itens.push({tipo:'peca',desc:'',qtd:'1',valor:''});
+  desenharItens();mudou();
+});
+$('btn-add').onclick=function(){
+  atual.itens.push({tipo:'peca',desc:'',qtd:'1',valor:''});
+  desenharItens();mudou();
+  var l=$('itens').querySelectorAll('.f-desc');l[l.length-1].focus();
+};
+['cliente','telefone','data','veiculo','placa','desc-tipo','desc-val','obs'].forEach(function(id){
+  $(id).addEventListener('input',mudou);$(id).addEventListener('change',mudou);
+});
+
+/* ---------- salvar / novo ---------- */
+function salvar(){
+  lerCampos();
+  if(!atual.cliente.trim()&&!atual.placa.trim()){toast('Informe o cliente ou a placa');return false}
+  var lista=lerLS(K_LISTA,[]);
+  var t=calcular(atual);
+  var reg=JSON.parse(JSON.stringify(atual));
+  reg.total=t.total;reg.atualizado=Date.now();
+  if(!reg.id){
+    reg.id='o'+Date.now();
+    var c=Math.max(lerLS(K_CONT,0)||0,reg.numero);gravarLS(K_CONT,c);
+    atual.id=reg.id;
   }
-}`;
+  var idx=lista.findIndex(function(x){return x.id===reg.id});
+  if(idx>-1)lista[idx]=reg;else lista.push(reg);
+  if(!gravarLS(K_LISTA,lista))return false;
+  gravarLS(K_RASC,atual);contar();toast('Orçamento salvo ✔');return true;
+}
+function novo(){
+  if(atual&&(atual.cliente||atual.placa||atual.itens.some(function(i){return i.desc||i.valor}))&&!atual.id){
+    if(!confirm('Descartar o orçamento atual que ainda não foi salvo?'))return;
+  }
+  atual=vazio();gravarLS(K_RASC,atual);preencherCampos();window.scrollTo(0,0);
+}
+$('btn-salvar').onclick=salvar;
+$('btn-novo').onclick=novo;
 
-            try {
-                // Requisição direta à API do Gemini usando v1beta
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: promptText }]
-                        }]
-                    })
-                });
+/* ---------- compartilhar ---------- */
+function resumoTexto(){
+  lerCampos();var t=calcular(atual);
+  var s="*Alcantara's Diesel — Orçamento nº "+pad(atual.numero)+"*\n";
+  s+="Data: "+dataBR(atual.data)+"\n";
+  if(atual.cliente)s+="Cliente: "+atual.cliente+"\n";
+  if(atual.veiculo||atual.placa)s+="Veículo: "+[atual.veiculo,atual.placa].filter(Boolean).join(' - ')+"\n";
+  s+="\n";
+  atual.itens.forEach(function(it){
+    if(!it.desc&&!num(it.valor))return;
+    s+="• "+it.qtd+"x "+(it.desc||'Item')+" ("+(it.tipo==='servico'?'serviço':'peça')+") — "+brl(num(it.qtd)*num(it.valor))+"\n";
+  });
+  s+="\nPeças: "+brl(t.pecas)+"\nServiços: "+brl(t.serv);
+  if(t.desc>0)s+="\nDesconto: - "+brl(t.desc);
+  s+="\n*TOTAL: "+brl(t.total)+"*";
+  if(atual.obs.trim())s+="\n\nObs: "+atual.obs.trim();
+  return s;
+}
+$('btn-whats').onclick=function(){
+  var d=atual.telefone.replace(/\D/g,'');
+  if(d&&d.length<=11)d='55'+d;
+  var url='https://wa.me/'+d+'?text='+encodeURIComponent(resumoTexto());
+  window.open(url,'_blank');
+};
 
-                if (!response.ok) {
-                    const errDetails = await response.text();
-                    throw new Error('Erro na resposta da API: ' + response.status);
-                }
+/* ---------- imprimir ---------- */
+$('btn-imprimir').onclick=function(){
+  lerCampos();var t=calcular(atual);
+  var linhas='';
+  atual.itens.forEach(function(it){
+    if(!it.desc&&!num(it.valor))return;
+    linhas+='<tr><td>'+(it.tipo==='servico'?'Serviço':'Peça')+'</td><td>'+esc(it.desc)+'</td><td class="r">'+esc(it.qtd)+'</td><td class="r">'+brl(num(it.valor))+'</td><td class="r">'+brl(num(it.qtd)*num(it.valor))+'</td></tr>';
+  });
+  $('print-area').innerHTML=
+    '<div class="top"><div><h1>Alcantara\'s Diesel</h1><div>Orçamento nº '+pad(atual.numero)+'</div></div><div style="text-align:right">Data: '+dataBR(atual.data)+'</div></div>'+
+    '<div><b>Cliente:</b> '+esc(atual.cliente)+(atual.telefone?' &nbsp;|&nbsp; <b>Tel:</b> '+esc(atual.telefone):'')+'</div>'+
+    '<div><b>Veículo:</b> '+esc(atual.veiculo)+(atual.placa?' &nbsp;|&nbsp; <b>Placa:</b> '+esc(atual.placa):'')+'</div>'+
+    '<table><thead><tr><th>Tipo</th><th>Descrição</th><th class="r">Qtd</th><th class="r">Unitário</th><th class="r">Subtotal</th></tr></thead><tbody>'+linhas+'</tbody></table>'+
+    '<div class="tt">Peças: '+brl(t.pecas)+'<br>Serviços: '+brl(t.serv)+(t.desc>0?'<br>Desconto: - '+brl(t.desc):'')+'<br><span class="g">TOTAL: '+brl(t.total)+'</span></div>'+
+    (atual.obs.trim()?'<p><b>Observações:</b><br>'+esc(atual.obs).replace(/\n/g,'<br>')+'</p>':'')+
+    '<div class="sig"><div>Assinatura do cliente</div><div>Alcantara\'s Diesel</div></div>';
+  window.print();
+};
 
-                const data = await response.json();
-                let textResult = data.candidates[0].content.parts[0].text;
-                
-                // Limpeza do JSON retornado pela IA
-                textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
-                const item = JSON.parse(textResult);
+/* ---------- lista de salvos ---------- */
+function contar(){$('qtd-salvos').textContent=lerLS(K_LISTA,[]).length}
+function desenharLista(){
+  var q=$('busca').value.toLowerCase().trim();
+  var lista=lerLS(K_LISTA,[]).sort(function(a,b){return b.atualizado-a.atualizado});
+  if(q)lista=lista.filter(function(o){return (o.cliente+' '+o.placa+' '+o.veiculo+' '+pad(o.numero)).toLowerCase().indexOf(q)>-1});
+  if(!lista.length){$('lista').innerHTML='<div class="empty">'+(q?'Nada encontrado.':'Nenhum orçamento salvo ainda.')+'</div>';return}
+  $('lista').innerHTML=lista.map(function(o){
+    return '<div class="card" data-id="'+esc(o.id)+'"><div class="saved"><div><div class="n">Nº '+pad(o.numero)+' • '+dataBR(o.data)+'</div>'+
+      '<div class="c">'+esc(o.cliente||'(sem nome)')+'</div>'+
+      '<div class="m">'+esc([o.veiculo,o.placa].filter(Boolean).join(' - '))+'</div></div>'+
+      '<div class="v">'+brl(o.total||0)+'</div></div>'+
+      '<div class="sbtns"><button data-a="abrir" type="button">Abrir</button><button data-a="dup" type="button">Duplicar</button><button data-a="del" class="x" type="button">Excluir</button></div></div>';
+  }).join('');
+}
+$('lista').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-a]');if(!b)return;
+  var id=b.closest('.card').dataset.id;
+  var lista=lerLS(K_LISTA,[]);
+  var o=lista.find(function(x){return x.id===id});if(!o)return;
+  if(b.dataset.a==='abrir'){atual=JSON.parse(JSON.stringify(o));gravarLS(K_RASC,atual);preencherCampos();aba('novo');}
+  if(b.dataset.a==='dup'){
+    atual=JSON.parse(JSON.stringify(o));atual.id=null;atual.numero=proxNumero();atual.data=hoje();
+    gravarLS(K_RASC,atual);preencherCampos();aba('novo');toast('Cópia criada — salve para registrar');
+  }
+  if(b.dataset.a==='del'){
+    if(!confirm('Excluir o orçamento nº '+pad(o.numero)+' de '+(o.cliente||'sem nome')+'?'))return;
+    lista=lista.filter(function(x){return x.id!==id});gravarLS(K_LISTA,lista);
+    if(atual&&atual.id===id){atual.id=null}
+    contar();desenharLista();
+  }
+});
+$('busca').addEventListener('input',desenharLista);
 
-                container.innerHTML = '';
-                renderizarCard(item, "RESULTADO DIRETO IA");
+/* ---------- abas ---------- */
+function aba(n){
+  var novoOn=n==='novo';
+  $('tela-novo').classList.toggle('hide',!novoOn);$('tela-salvos').classList.toggle('hide',novoOn);
+  $('tab-novo').classList.toggle('on',novoOn);$('tab-salvos').classList.toggle('on',!novoOn);
+  if(!novoOn)desenharLista();
+  window.scrollTo(0,0);
+}
+$('tab-novo').onclick=function(){aba('novo')};
+$('tab-salvos').onclick=function(){aba('salvos')};
 
-            } catch (err) {
-                console.error("Erro detalhado:", err);
-                container.innerHTML = '<div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-3 text-center shadow-xl">' +
-                    '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl"></i>' +
-                    '<h3 class="font-black text-slate-200 text-sm">Não foi possível consultar "' + termo + '"</h3>' +
-                    '<p class="text-xs text-slate-400 leading-relaxed">Verifique se o código está correto ou se a chave de API no arquivo tem as permissões ativas.</p>' +
-                '</div>';
-            }
-        }
+/* ---------- backup ---------- */
+$('btn-exp').onclick=function(){
+  var blob=new Blob([JSON.stringify({lista:lerLS(K_LISTA,[]),contador:lerLS(K_CONT,0)},null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='orcamentos-alcantara-'+hoje()+'.json';document.body.appendChild(a);a.click();a.remove();
+};
+$('btn-imp').onclick=function(){$('arq-imp').click()};
+$('arq-imp').onchange=function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var d=JSON.parse(r.result);if(!Array.isArray(d.lista))throw 0;
+      var lista=lerLS(K_LISTA,[]);var n=0;
+      d.lista.forEach(function(o){if(o&&o.id&&!lista.some(function(x){return x.id===o.id})){lista.push(o);n++}});
+      gravarLS(K_LISTA,lista);
+      gravarLS(K_CONT,Math.max(lerLS(K_CONT,0)||0,d.contador||0));
+      contar();desenharLista();toast(n+' orçamento(s) importado(s)');
+    }catch(err){toast('Arquivo inválido')}
+    e.target.value='';
+  };
+  r.readAsText(f);
+};
 
-        function renderizarCard(item, fonte) {
-            var container = document.getElementById('container-resultado');
-            var equivalenciasHTML = '';
-            
-            if (item.equivalencias) {
-                for (var marca in item.equivalencias) {
-                    var cod = item.equivalencias[marca];
-                    if (cod) {
-                        equivalenciasHTML += '<div onclick="window.copiarTxt(\'' + cod + '\')" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center cursor-pointer hover:border-red-500 transition">' +
-                            '<span class="text-[11px] font-bold text-slate-400">' + marca + '</span>' +
-                            '<strong class="text-xs font-black text-white font-mono">' + cod + ' <i class="fa-regular fa-copy text-[10px] text-slate-500"></i></strong>' +
-                        '</div>';
-                    }
-                }
-            }
+/* ---------- instalação (PWA) ---------- */
+var promptInst=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();promptInst=e;$('btn-instalar').style.display='block'});
+$('btn-instalar').onclick=function(){
+  if(!promptInst)return;promptInst.prompt();
+  promptInst.userChoice.then(function(){promptInst=null;$('btn-instalar').style.display='none'});
+};
+window.addEventListener('appinstalled',function(){$('btn-instalar').style.display='none'});
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+}
 
-            var html = '<div class="bg-slate-900 border border-red-500/30 p-5 rounded-3xl shadow-2xl space-y-4">' +
-                '<div class="flex justify-between items-start border-b border-slate-800 pb-3">' +
-                    '<div>' +
-                        '<div class="flex items-center gap-2">' +
-                            '<span class="text-[9px] font-black bg-red-950 text-red-400 px-2.5 py-0.5 rounded-full border border-red-800 uppercase">' + fonte + '</span>' +
-                            '<span class="text-[9px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full uppercase">' + (item.categoria || 'FILTRO') + '</span>' +
-                        '</div>' +
-                        '<h2 class="text-xl font-black italic text-red-500 mt-1.5">' + (item.principal || 'RESULTADO') + '</h2>' +
-                        '<p class="text-[11px] text-slate-300 font-semibold">' + (item.tipo || '') + '</p>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2">' +
-                    '<div><span class="text-[10px] font-bold text-red-400 uppercase block">Motorização Exata</span><p class="text-xs font-black text-slate-100">' + (item.motor || 'N/A') + '</p></div>' +
-                    '<div class="pt-2 border-t border-slate-800"><span class="text-[10px] font-bold text-slate-400 uppercase block">Aplicação em Veículos</span><p class="text-xs font-medium text-slate-300 leading-relaxed">' + (item.aplicacaoOficial || 'N/A') + '</p></div>' +
-                '</div>' +
-                '<div class="space-y-2"><span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide block">Conversão Cruzada (Toque p/ copiar)</span><div class="grid grid-cols-1 gap-1.5">' + equivalenciasHTML + '</div></div>' +
-                '<button type="button" onclick="window.copiarResumo(\'' + item.principal + '\', \'' + item.motor + '\', \'' + item.aplicacaoOficial + '\')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3.5 rounded-2xl border border-slate-700 transition uppercase text-xs flex items-center justify-center gap-2">' +
-                    '<i class="fa-solid fa-share-nodes text-red-400"></i> Copiar Resumo para WhatsApp' +
-                '</button>' +
-            '</div>';
-
-            container.innerHTML = html;
-        }
-
-        window.copiarTxt = function(txt) {
-            if (navigator.clipboard) navigator.clipboard.writeText(txt);
-            alert('Copiado: ' + txt);
-        };
-
-        window.copiarResumo = function(filtro, motor, aplicacao) {
-            var txt = "*Alcantara's Diesel - Consulta de Filtro*\n\n📌 *Filtro Ref:* " + filtro + "\n⚙️ *Motor:* " + motor + "\n🚛 *Aplicação:* " + aplicacao;
-            if (navigator.clipboard) navigator.clipboard.writeText(txt);
-            alert('Resumo copiado!');
-        };
-
-        function resetarCache() {
-            if ('caches' in window) {
-                caches.keys().then(function(names) {
-                    names.forEach(function(name) { caches.delete(name); });
-                });
-            }
-            localStorage.clear();
-            sessionStorage.clear();
-            alert('Cache limpo!');
-            window.location.reload(true);
-        }
-
-        window.onload = function() {
-            var btnBuscar = document.getElementById('btn-buscar');
-            var inputBusca = document.getElementById('input-busca');
-            var btnLimparTopo = document.getElementById('btn-limpar-topo');
-            var btnLimparTexto = document.getElementById('btn-limpar-texto');
-
-            if (btnBuscar) btnBuscar.onclick = buscarOnline;
-            if (btnLimparTopo) btnLimparTopo.onclick = resetarCache;
-            if (btnLimparTexto) btnLimparTexto.onclick = resetarCache;
-
-            if (inputBusca) {
-                inputBusca.onkeyup = function(e) {
-                    if (e.key === 'Enter' || e.keyCode === 13) buscarOnline();
-                };
-            }
-        };
-    </script>
+/* ---------- início ---------- */
+var rasc=lerLS(K_RASC,null);
+atual=(rasc&&rasc.itens&&rasc.itens.length)?rasc:vazio();
+preencherCampos();contar();
+})();
+</script>
 </body>
 </html>
